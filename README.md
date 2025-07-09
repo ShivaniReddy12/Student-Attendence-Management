@@ -20,8 +20,7 @@ It helps to manage student records and track attendance with ease.
 - **Backend:** Node.js, Express.js  
 - **Database:** MongoDB *(or your database name)*
 
-- ## 🔗 Live Demo / Output Link
+## 🔗 Live Demo
 
-You can view the working project here:  
-[🚀 Click to View Output](file:///C:/Users/User/OneDrive/Desktop/Student%20Attendence%20Management/Student.html)
+[🚀 Click Here to View Live Project](https://yourusername.github.io/Student-Attendence-Management/)
 
