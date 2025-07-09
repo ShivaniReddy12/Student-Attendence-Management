@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Attendance Project</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background-color: pink;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 800px;
+}
+
+.container h1, h2 {
+  text-align: center;
+}
+
+.add-attendance, .daily-attendance, .average-attendance {
+  margin-bottom: 20px;
+}
+
+input[type="text"], input[type="date"], select {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: black;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: pink;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+  </style>
+  <script>
+    // Function to add attendance
+function addAttendance() {
+  let studentName = document.getElementById('studentName').value.trim();
+  let attendanceDate = document.getElementById('attendanceDate').value;
+  let attendanceStatus = document.getElementById('attendanceStatus').value;
+
+  if (studentName === '' || attendanceDate === '') {
+    alert('Please enter student name and select date');
+    return;
+  }
+
+  let attendanceRecord = {
+    date: attendanceDate,
+    status: attendanceStatus
+  };
+
+  // Retrieve existing attendance records from local storage or initialize if empty
+  let studentsAttendance = JSON.parse(localStorage.getItem('studentsAttendance')) || {};
+
+  // Initialize student's attendance record if not present
+  if (!studentsAttendance[studentName]) {
+    studentsAttendance[studentName] = [];
+  }
+
+  // Add new attendance record
+  studentsAttendance[studentName].push(attendanceRecord);
+
+  // Update local storage
+  localStorage.setItem('studentsAttendance', JSON.stringify(studentsAttendance));
+
+  // Clear form fields
+  document.getElementById('studentName').value = '';
+  document.getElementById('attendanceDate').value = '';
+  document.getElementById('attendanceStatus').value = 'present';
+
+  // Update tables
+  updateDailyAttendanceTable();
+  updateAverageAttendanceTable();
+}
+
+// Function to update daily attendance table
+function updateDailyAttendanceTable() {
+  let studentsAttendance = JSON.parse(localStorage.getItem('studentsAttendance')) || {};
+  let dailyAttendanceTableBody = document.getElementById('dailyAttendanceTableBody');
+  dailyAttendanceTableBody.innerHTML = '';
+
+  Object.keys(studentsAttendance).forEach(student => {
+    studentsAttendance[student].forEach(record => {
+      let tr = document.createElement('tr');
+      let tdDate = document.createElement('td');
+      let tdStudent = document.createElement('td');
+      let tdAttendance = document.createElement('td');
+
+      tdDate.textContent = record.date;
+      tdStudent.textContent = student;
+      tdAttendance.textContent = record.status === 'present' ? 'Present' : 'Absent';
+
+      tr.appendChild(tdDate);
+      tr.appendChild(tdStudent);
+      tr.appendChild(tdAttendance);
+
+      dailyAttendanceTableBody.appendChild(tr);
+    });
+  });
+}
+
+// Function to update average attendance table
+function updateAverageAttendanceTable() {
+  let studentsAttendance = JSON.parse(localStorage.getItem('studentsAttendance')) || {};
+  let averageAttendanceTableBody = document.getElementById('averageAttendanceTableBody');
+  averageAttendanceTableBody.innerHTML = '';
+
+  Object.keys(studentsAttendance).forEach(student => {
+    let totalDays = studentsAttendance[student].length;
+    let presentDays = studentsAttendance[student].filter(record => record.status === 'present').length;
+    let averageAttendance = (presentDays / totalDays) * 100 || 0;
+
+    let tr = document.createElement('tr');
+    let tdStudent = document.createElement('td');
+    let tdAverageAttendance = document.createElement('td');
+
+    tdStudent.textContent = student;
+    tdAverageAttendance.textContent = averageAttendance.toFixed(2) + '%';
+
+    tr.appendChild(tdStudent);
+    tr.appendChild(tdAverageAttendance);
+
+    averageAttendanceTableBody.appendChild(tr);
+  });
+}
+
+// Display initial tables on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateDailyAttendanceTable();
+  updateAverageAttendanceTable();
+});
+
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Student Attendance Management System</h1>
+
+    <!-- Add Attendance Form -->
+    <div class="add-attendance">
+      <h2>Add Attendance</h2>
+      <label for="studentName">Student Name:</label>
+      <input type="text" id="studentName" placeholder="Enter student name">
+      <label for="attendanceDate">Date:</label>
+      <input type="date" id="attendanceDate">
+      <label for="attendanceStatus">Attendance:</label>
+      <select id="attendanceStatus">
+        <option value="present">Present</option>
+        <option value="absent">Absent</option>
+      </select>
+      <button onclick="addAttendance()">Add Attendance</button>
+    </div>
+
+    <!-- Daily Attendance Table -->
+    <div class="daily-attendance">
+      <h2>Daily Attendance</h2>
+      <table id="dailyAttendanceTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Student Name</th>
+            <th>Attendance</th>
+          </tr>
+        </thead>
+        <tbody id="dailyAttendanceTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Average Attendance Table -->
+    <div class="average-attendance">
+      <h2>Average Attendance</h2>
+      <table id="averageAttendanceTable">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Average Attendance (%)</th>
+          </tr>
+        </thead>
+        <tbody id="averageAttendanceTableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
