@@ -22,5 +22,5 @@ It helps to manage student records and track attendance with ease.
 
 ## 🔗 Live Demo
 
-[🚀 Click Here to View Live Project](https://yourusername.github.io/Student-Attendence-Management/)
+[🚀 Click Here to View Live Project]( https://shivanireddy12.github.io/Student-Attendence-Management/)
 
